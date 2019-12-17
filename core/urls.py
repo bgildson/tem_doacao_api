@@ -29,9 +29,9 @@ router.register('species', SpeciesViewSet, basename='species')
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Documentação da API",
+      title="API Documentation",
       default_version='v1',
-      description="Documentação Detalhada para Consumo da API",
+      description="Detailed Documentation for API Consumption.",
       contact=openapi.Contact(email="temdoacao@gmail.com"),
    ),
    public=True,
