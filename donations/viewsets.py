@@ -4,7 +4,7 @@ from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import mixins, viewsets, serializers, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from favorites.models import Favorite
@@ -31,7 +31,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
     pagination_class = DonationsPagination
 
     @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
     @transaction.atomic()
     def toggle_favorite(self, request, pk, *args, **kwargs):
         donation = self.get_object()
@@ -50,7 +50,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
         return Response(response_data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
     @transaction.atomic()
     def favorite(self, request, pk, *args, **kwargs):
         donation = self.get_object()
@@ -67,7 +67,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={204: ''}, request_body=no_body)
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
     @transaction.atomic()
     def unfavorite(self, request, pk, *args, **kwargs):
         donation = self.get_object()
