@@ -30,7 +30,8 @@ class DonationsViewSet(mixins.CreateModelMixin,
     ordering = ('-started_at',)
     pagination_class = DonationsPagination
 
-    @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
+    @swagger_auto_schema(responses={200: FavoriteSerializer(), 204: ''},
+                         request_body=no_body)
     @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
     @transaction.atomic()
     def toggle_favorite(self, request, pk, *args, **kwargs):
@@ -39,15 +40,13 @@ class DonationsViewSet(mixins.CreateModelMixin,
 
         if favorite:
             favorite.delete()
-            response_data = None
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
         else:
             serializer = FavoriteSerializer(data={'donation_id': pk},
                                             context={'request': request})
             serializer.is_valid()
             serializer.save()
-            response_data = serializer.data
-
-        return Response(response_data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
     @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
