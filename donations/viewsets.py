@@ -76,7 +76,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
         if favorite:
             favorite.delete()
 
-        return Response(None, status=status.HTTP_204_OK)
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
 class DonationsImagesViewSet(mixins.CreateModelMixin,
