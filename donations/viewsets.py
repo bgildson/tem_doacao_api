@@ -1,8 +1,9 @@
 from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import mixins, viewsets, serializers, status
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
@@ -21,7 +22,8 @@ class DonationsViewSet(mixins.CreateModelMixin,
     queryset = Donation.objects.order_by('-started_at').all()
     serializer_class = DonationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly & DonationsPermission,)
-    filter_backends = (SearchFilter,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter,)
+    filterset_fields = ('category__id',)
     search_fields = ('description', 'long_description', 'category__name',)
 
     @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
