@@ -1,5 +1,5 @@
 from django.db import transaction
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import mixins, viewsets, serializers, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -21,8 +21,8 @@ class DonationsViewSet(mixins.CreateModelMixin,
     serializer_class = DonationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly & DonationsPermission,)
 
-    @swagger_auto_schema(responses={200: FavoriteSerializer()})
-    @action(methods=['post'], detail=True, serializer_class=None)
+    @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
+    @action(methods=['post'], detail=True)
     @transaction.atomic()
     def toggle_favorite(self, request, pk, *args, **kwargs):
         favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
@@ -38,8 +38,8 @@ class DonationsViewSet(mixins.CreateModelMixin,
 
         return Response(response_data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: FavoriteSerializer()})
-    @action(methods=['post'], detail=True, serializer_class=None)
+    @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
+    @action(methods=['post'], detail=True)
     @transaction.atomic()
     def favorite(self, request, pk, *args, **kwargs):
         favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
@@ -53,8 +53,8 @@ class DonationsViewSet(mixins.CreateModelMixin,
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(responses={200: None})
-    @action(methods=['post'], detail=True, serializer_class=None)
+    @swagger_auto_schema(responses={204: ''}, request_body=no_body)
+    @action(methods=['post'], detail=True)
     @transaction.atomic()
     def unfavorite(self, request, pk, *args, **kwargs):
         favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
@@ -62,7 +62,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
         if favorite:
             favorite.delete()
 
-        return Response(None, status=status.HTTP_200_OK)
+        return Response(None, status=status.HTTP_204_OK)
 
 
 class DonationsImagesViewSet(mixins.CreateModelMixin,
