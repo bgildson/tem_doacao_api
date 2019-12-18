@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     'categories',
     'donations',
     'favorites',
-    'pets',
-    'species',
     'users',
 ]
 

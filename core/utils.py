@@ -1,5 +1,6 @@
 from urllib.parse import unquote
 
+from rest_framework.serializers import SlugRelatedField
 from dj_database_url import parse as _database_parse
 from storages.utils import safe_join
 
@@ -15,12 +16,14 @@ def generic_upload_to(base_path, instance, filename):
 
     return safe_join(base_path, filename)
 
+
 def jwt_response_payload_handler(token, user=None, request=None):
     from users.serializers import UserSerializer
     return {
         'token': token,
         'user': UserSerializer(user).data if user.is_authenticated else None
     }
+
 
 def database_parse(url, **kwargs):
     """
@@ -33,3 +36,11 @@ def database_parse(url, **kwargs):
         **_parsed,
         'HOST': unquote(_parsed['HOST'])
     }
+
+
+class ImageUrlRelatedField(SlugRelatedField):
+    """
+    custom related field to represent correctly when the field is a file
+    """
+    def to_representation(self, instance):
+        return super(ImageUrlRelatedField, self).to_representation(instance).url

@@ -20,16 +20,15 @@ from drf_yasg.views import get_schema_view
 from rest_framework.routers import DefaultRouter
 
 from categories.viewsets import CategoriesViewSet
-from donations.viewsets import DonationsViewSet
-from pets.viewsets import PetsViewSet
-from species.viewsets import SpeciesViewSet
+from donations.viewsets import DonationsViewSet, DonationsImagesViewSet
+from favorites.viewsets import FavoritesViewSet
 from users.views import SignInUpView
 
 router = DefaultRouter()
 router.register('categories', CategoriesViewSet, basename='categories')
 router.register('donations', DonationsViewSet, basename='donations')
-router.register('pets', PetsViewSet, basename='pets')
-router.register('species', SpeciesViewSet, basename='species')
+router.register('donations-images', DonationsImagesViewSet, basename='donations-images')
+router.register('favorites', FavoritesViewSet, basename='favorites')
 
 schema_view = get_schema_view(
    openapi.Info(
