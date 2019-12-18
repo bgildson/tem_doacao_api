@@ -34,13 +34,15 @@ class DonationsViewSet(mixins.CreateModelMixin,
     @action(methods=['post'], detail=True)
     @transaction.atomic()
     def toggle_favorite(self, request, pk, *args, **kwargs):
-        favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
+        donation = self.get_object()
+        favorite = Favorite.objects.filter(donation=donation, user=request.user).first()
 
         if favorite:
             favorite.delete()
             response_data = None
         else:
-            serializer = FavoriteSerializer(data={'donation_id': pk}, context={'request': request})
+            serializer = FavoriteSerializer(data={'donation_id': pk},
+                                            context={'request': request})
             serializer.is_valid()
             serializer.save()
             response_data = serializer.data
@@ -51,12 +53,14 @@ class DonationsViewSet(mixins.CreateModelMixin,
     @action(methods=['post'], detail=True)
     @transaction.atomic()
     def favorite(self, request, pk, *args, **kwargs):
+        donation = self.get_object()
         favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
 
         if favorite:
             serializer = FavoriteSerializer(instance=favorite)
         else:
-            serializer = FavoriteSerializer(data={'donation_id': pk}, context={'request': request})
+            serializer = FavoriteSerializer(data={'donation_id': pk},
+                                            context={'request': request})
             serializer.is_valid()
             serializer.save()
 
@@ -66,6 +70,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
     @action(methods=['post'], detail=True)
     @transaction.atomic()
     def unfavorite(self, request, pk, *args, **kwargs):
+        donation = self.get_object()
         favorite = Favorite.objects.filter(donation__id=pk, user=request.user).first()
 
         if favorite:
