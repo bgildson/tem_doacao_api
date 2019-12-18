@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from favorites.models import Favorite
 from favorites.serializers import FavoriteSerializer
 from .models import Donation, DonationImage
+from .pagination import DonationsPagination
 from .permissions import DonationsPermission, DonationsImagesPermission
 from .serializers import DonationSerializer, DonationImageSerializer
 
@@ -19,12 +20,15 @@ class DonationsViewSet(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
                        mixins.UpdateModelMixin,
                        viewsets.GenericViewSet):
-    queryset = Donation.objects.order_by('-started_at').all()
+    queryset = Donation.objects.all()
     serializer_class = DonationSerializer
     permission_classes = (IsAuthenticatedOrReadOnly & DonationsPermission,)
     filter_backends = (DjangoFilterBackend, OrderingFilter, SearchFilter,)
     filterset_fields = ('category__id',)
     search_fields = ('description', 'long_description', 'category__name',)
+    # default ordering, required by cursor pagination style
+    ordering = ('-started_at',)
+    pagination_class = DonationsPagination
 
     @swagger_auto_schema(responses={200: FavoriteSerializer()}, request_body=no_body)
     @action(methods=['post'], detail=True)
