@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from donations.serializers import DonationSerializer
+from donations.serializers.donations import DonationSerializer
 from users.serializers import UserSerializer
 from donations.models import Donation
 from .models import Favorite

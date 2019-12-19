@@ -12,7 +12,8 @@ from favorites.serializers import FavoriteSerializer
 from .models import Donation, DonationImage
 from .pagination import DonationsPagination
 from .permissions import DonationsPermission, DonationsImagesPermission
-from .serializers import DonationSerializer, DonationImageSerializer
+from .serializers.donations import DonationSerializer
+from .serializers.donations_images import DonationImageSerializer
 
 
 class DonationsViewSet(mixins.CreateModelMixin,
