@@ -1,5 +1,6 @@
 import json
 
+from decouple import config
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import transaction
@@ -10,7 +11,6 @@ from rest_framework import generics, serializers, status
 from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .serializers import UserSerializer, SignInSerializer, SignInUpSerializer
 
 
@@ -18,17 +18,44 @@ class SignInUpView(APIView):
     @swagger_auto_schema(query_serializer=SignInUpSerializer,
                          responses={200: SignInSerializer()},)
     @transaction.atomic()
+    def get(self, request):
+        sign_in_up_serializer = SignInUpSerializer(data=request.query_params)
+
+        return self._handle_sign_in_up_serializer(sign_in_up_serializer)
+
+    @swagger_auto_schema(request_body=SignInUpSerializer,
+                         responses={200: SignInSerializer()},)
+    @transaction.atomic()
     def post(self, request):
         sign_in_up_serializer = SignInUpSerializer(data=request.data)
 
+        return self._handle_sign_in_up_serializer(sign_in_up_serializer)
+
+    def _handle_sign_in_up_serializer(self, sign_in_up_serializer):
         sign_in_up_serializer.is_valid()
 
-        token = sign_in_up_serializer.data['social_auth_google_token']
+        google_access_token = sign_in_up_serializer.data['google_access_token']
 
-        if not token:
+        if not google_access_token:
             raise serializers.ValidationError(_('Token não informado!'))
 
-        userinfo_url = f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={token}'
+        tokeninfo_url = f'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={google_access_token}'
+        response_tokeninfo = requests.get(tokeninfo_url)
+
+        if response_tokeninfo.status_code != 200:
+            raise serializers.ValidationError(_('Token inválido!'))
+
+        data = json.loads(response_tokeninfo.text)
+
+        google_project_number = config('GOOGLE_PROJECT_NUMBER')
+
+        if not google_project_number:
+            raise serializers.ValidationError(_('Validador não definido!'))
+
+        if not data['audience'].startswith(google_project_number):
+            raise serializers.ValidationError(_('Token inválido!'))
+
+        userinfo_url = f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={google_access_token}'
         response_userinfo = requests.get(userinfo_url)
 
         if response_userinfo.status_code != 200:

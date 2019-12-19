@@ -51,6 +51,9 @@ DISABLE_COLLECTSTATIC=
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
+
+# the google project identificator, used to validate access tokens
+GOOGLE_PROJECT_NUMBER=
 ```
 6. Update database schema, _only in first running_.
 ```bash

@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignInUpSerializer(serializers.Serializer):
-    social_auth_google_token = serializers.CharField(required=True)
+    google_access_token = serializers.CharField(required=True)
 
 
 class SignInSerializer(serializers.Serializer):
