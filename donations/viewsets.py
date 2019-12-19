@@ -1,5 +1,6 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.inspectors import SwaggerAutoSchema
 from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import mixins, viewsets, serializers, status
 from rest_framework.decorators import action
@@ -16,6 +17,13 @@ from .serializers.donations import DonationSerializer
 from .serializers.donations_images import DonationImageSerializer
 
 
+class DonationsSwaggerSchema(SwaggerAutoSchema):
+    def get_security(self):
+        if self.view.action in ('list', 'retrieve',):
+            return []
+        return super().get_security()
+
+
 class DonationsViewSet(mixins.CreateModelMixin,
                        mixins.ListModelMixin,
                        mixins.RetrieveModelMixin,
@@ -30,6 +38,7 @@ class DonationsViewSet(mixins.CreateModelMixin,
     # default ordering, required by cursor pagination style
     ordering = ('-started_at',)
     pagination_class = DonationsPagination
+    swagger_schema = DonationsSwaggerSchema
 
     @swagger_auto_schema(responses={200: FavoriteSerializer(), 204: ''},
                          request_body=no_body)
@@ -79,6 +88,13 @@ class DonationsViewSet(mixins.CreateModelMixin,
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
+class DonationsImagesSwaggerSchema(SwaggerAutoSchema):
+    def get_security(self):
+        if self.view.action in ('list', 'retrieve',):
+            return []
+        return super().get_security()
+
+
 class DonationsImagesViewSet(mixins.CreateModelMixin,
                              mixins.ListModelMixin,
                              mixins.RetrieveModelMixin,
@@ -87,3 +103,4 @@ class DonationsImagesViewSet(mixins.CreateModelMixin,
     queryset = DonationImage.objects.all()
     serializer_class = DonationImageSerializer
     permission_classes = (IsAuthenticatedOrReadOnly & DonationsImagesPermission,)
+    swagger_schema = DonationsImagesSwaggerSchema

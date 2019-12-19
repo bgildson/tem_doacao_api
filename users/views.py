@@ -16,7 +16,8 @@ from .serializers import UserSerializer, SignInSerializer, SignInUpSerializer
 
 class SignInUpView(APIView):
     @swagger_auto_schema(query_serializer=SignInUpSerializer,
-                         responses={200: SignInSerializer()},)
+                         responses={200: SignInSerializer()},
+                         security=[])
     @transaction.atomic()
     def get(self, request):
         sign_in_up_serializer = SignInUpSerializer(data=request.query_params)
@@ -24,7 +25,8 @@ class SignInUpView(APIView):
         return self._handle_sign_in_up_serializer(sign_in_up_serializer)
 
     @swagger_auto_schema(request_body=SignInUpSerializer,
-                         responses={200: SignInSerializer()},)
+                         responses={200: SignInSerializer()},
+                         security=[])
     @transaction.atomic()
     def post(self, request):
         sign_in_up_serializer = SignInUpSerializer(data=request.data)
