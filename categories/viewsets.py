@@ -1,18 +1,13 @@
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from drf_yasg.inspectors import SwaggerAutoSchema
 
 from .models import Category
 from .serializers import CategorySerializer
 
 
-class CategoriesSwaggerSchema(SwaggerAutoSchema):
-    def get_security(self):
-        if self.view.action in ('list', 'retrieve',):
-            return []
-        return super().get_security()
-
-
+@method_decorator(name='list', decorator=swagger_auto_schema(security=[]))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(security=[]))
 class CategoriesViewSet(ReadOnlyModelViewSet):
     queryset = Category.objects.order_by('name').all()
     serializer_class = CategorySerializer
-    swagger_schema = CategoriesSwaggerSchema
