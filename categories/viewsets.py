@@ -9,5 +9,6 @@ from .serializers import CategorySerializer
 @method_decorator(name='list', decorator=swagger_auto_schema(security=[]))
 @method_decorator(name='retrieve', decorator=swagger_auto_schema(security=[]))
 class CategoriesViewSet(ReadOnlyModelViewSet):
-    queryset = Category.objects.order_by('name').all()
+    queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    ordering = ('name',)
