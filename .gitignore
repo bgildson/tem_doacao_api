@@ -3,6 +3,7 @@
 **/*.pyo
 **/*.sqlite*
 
-**/.env
+**/.env*
+!**/.env.template
 .idea
 .vscode/settings.json

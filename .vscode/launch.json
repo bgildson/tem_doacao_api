@@ -14,7 +14,8 @@
         "--noreload",
         "0.0.0.0:8080"
       ],
-      "django": true
+      "django": true,
+      "envFile": "${workspaceFolder}/.env.dev"
     },
     {
       "name": "Python: Django [tests]",
@@ -24,7 +25,8 @@
       "args": [
         "test",
       ],
-      "django": true
+      "django": true,
+      "envFile": "${workspaceFolder}/.env.test"
     }
   ]
 }
